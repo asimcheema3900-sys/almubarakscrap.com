@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ALMUBARAK — Advanced Layout (Single File)</title>
+
+  <!-- Google font (optional) -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+  /* ---------------- RESET ---------------- */
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    font-family:'Poppins',system-ui,Segoe UI,Roboto,Arial,sans-serif;
+    line-height:1.5;
+    background:var(--bg, #f5f7fa);
+    color:var(--text, #111);
+    -webkit-font-smoothing:antialiased;
+    transition:background 0.8s ease, color 0.6s ease;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+  .container{width:92%;max-width:1200px;margin:0 auto}
+
+/* ---------------- THEME VARIABLES ---------------- */
+:root{
+  --bg:#f5f7fa;
+  --text:#0e1724;
+  --muted:#68707b;
+  --primary:#1766ff;
+  --accent:#00d084;
+  --card:rgba(255,255,255,0.9);
+  --glass:rgba(255,255,255,0.06);
+  --glow:0 10px 35px rgba(23,102,255,0.14);
+  --radius:14px;
+  --glass-blur:8px;
+}
+body.theme-dark{
+  --bg:#071020;
+  --text:#e8f3ff;
+  --muted:#9fb4c9;
+  --primary:#00f7a5;
+  --accent:#00b387;
+  --card:rgba(16,20,24,0.72);
+  --glass:rgba(255,255,255,0.03);
+  --glow:0 14px 40px rgba(0,247,165,0.08);
+  --radius:14px;
+}
+body.theme-grad{
+  --bg:linear-gradient(135deg,#2d6df6 0%,#9b5cff 50%, #ff6f61 100%);
+  --text:#fff;
+  --muted:rgba(255,255,255,0.85);
+  --primary:#fff7;
+  --accent:#ffd36a;
+  --card:rgba(255,255,255,0.06);
+  --glass:rgba(255,255,255,0.05);
+  --glow:0 18px 50px rgba(255,255,255,0.08);
+  --radius:16px;
+}
+
+/* ---------------- GLOBAL UTILS ---------------- */
+.flex{display:flex}
+.center{display:flex;align-items:center;justify-content:center}
+.section{padding:70px 0}
+.h6{font-size:13px;color:var(--muted);letter-spacing:1px}
+
+/* ---------------- HEADER ---------------- */
+.header {
+  position:sticky;top:12px;z-index:1200;
+  margin:12px 0;
+}
+.header-inner{
+  background:var(--card);
+  border-radius:20px;
+  padding:12px 18px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;box-shadow:var(--glow);
+  backdrop-filter: blur(var(--glass-blur));
+}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .logo {
+  width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--accent));
+  box-shadow:0 6px 18px rgba(0,0,0,0.12), inset 0 -6px 16px rgba(255,255,255,0.04);
+  display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:18px;
+}
+.brand h1{font-size:18px;line-height:1;color:var(--text);font-weight:700}
+.nav{display:flex;gap:18px;align-items:center}
+.nav a{padding:8px 12px;border-radius:10px;color:var(--muted);font-weight:600;transition:all .25s}
+.nav a:hover{color:var(--text);background:var(--glass);transform:translateY(-3px)}
+.header-actions{display:flex;gap:10px;align-items:center}
+
+/* hamburger (mobile) */
+.hamburger{display:none;width:44px;height:44px;border-radius:10px;background:var(--glass);align-items:center;justify-content:center;cursor:pointer}
+.hamburger span{display:block;width:18px;height:2px;background:var(--text);border-radius:2px;box-shadow:0 6px 0 var(--text),0 -6px 0 var(--text)}
+
+/* ---------------- HERO (PARALLAX + COVER) ---------------- */
+.hero {
+  position:relative;
+  min-height:420px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text);
+  border-radius:24px;
+  overflow:hidden;
+  margin-top:18px;
+  box-shadow:0 30px 60px rgba(3,10,25,0.08);
+}
+.hero__bg{
+  position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?q=80&w=1600&auto=format&fit=crop');
+  background-size:cover;background-position:center center;
+  transform:translateZ(0);
+  filter:brightness(.45);
+  will-change:transform;
+  /* parallax effect on desktop via background-attachment */
+  background-attachment: fixed;
+}
+.hero-overlay{
+  position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.32));
+}
+.hero-content{position:relative;z-index:5;padding:48px 22px;text-align:center;max-width:940px}
+.hero h2{font-size:36px;color:#fff;margin-bottom:10px;letter-spacing:-0.02em}
+.hero p{color:rgba(255,255,255,0.9);font-size:16px;margin-bottom:18px}
+
+/* CTA buttons in hero */
+.btn{
+  display:inline-block;padding:12px 20px;border-radius:999px;font-weight:700;cursor:pointer;
+  transition:transform .25s, box-shadow .25s, opacity .25s;
+  box-shadow:var(--glow);
+}
+.btn-primary{background:linear-gradient(90deg,var(--primary),var(--accent));color:#fff;border:0}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.08);color:#fff}
+.btn:hover{transform:translateY(-4px);opacity:0.98}
+
+/* small pickup form (glass) */
+.pickup-form{
+  margin:20px auto 0;max-width:700px;padding:18px;border-radius:14px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+  backdrop-filter: blur(8px);
+  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
+  align-items:center;box-shadow:var(--glow);
+}
+.pickup-form input, .pickup-form select, .pickup-form button{
+  padding:10px 12px;border-radius:10px;border:0;background:rgba(255,255,255,0.06);color:var(--text);
+  outline:none;font-weight:600;
+}
+.pickup-form .full{grid-column:1/-1}
+
+/* ---------------- FEATURE GRID ---------------- */
+.section--cards{padding:64px 0}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:22px;
+}
+@media (max-width:980px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.grid{grid-template-columns:1fr}.pickup-form{grid-template-columns:1fr;}}
+.card{
+  border-radius:var(--radius);
+  background:var(--card);
+  padding:20px;
+  overflow:hidden;
+  transition:transform .45s cubic-bezier(.2,.9,.25,1), box-shadow .45s;
+  box-shadow:0 10px 30px rgba(0,0,0,0.06);
+  backdrop-filter: blur(var(--glass-blur));
+}
+.card .media{height:160px;border-radius:12px 12px 8px 8px;overflow:hidden;margin-bottom:14px}
+.card .media img{width:100%;height:100%;object-fit:cover;display:block}
+.card h3{font-size:18px;margin-bottom:8px;color:var(--text)}
+.card p{color:var(--muted);font-size:14px}
+.card:hover{transform:translateY(-12px) rotate3d(0,1,0,1deg); box-shadow:var(--glow)}
+
+/* ---------------- CTA Section (animated gradient) ---------------- */
+.cta{
+  margin-top:50px;border-radius:20px;padding:56px;text-align:center;color:var(--text);
+  background:linear-gradient(270deg,var(--primary) 0%, var(--accent) 50%, rgba(255,255,255,0.04) 100%);
+  background-size:200% 200%;
+  animation:flow 8s linear infinite;
+  box-shadow:0 20px 50px rgba(0,0,0,0.08);
+}
+@keyframes flow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.cta h2{font-size:28px;margin-bottom:10px;color:var(--text)}
+.cta p{color:var(--muted);margin-bottom:18px}
+
+/* ---------------- CONTACT / MAP ---------------- */
+.contact{background:var(--glass);border-radius:14px;padding:40px;backdrop-filter:blur(6px)}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media (max-width:720px){.form-grid{grid-template-columns:1fr}}
+.contact input, .contact textarea{
+  width:100%;padding:12px;border-radius:10px;border:0;background:transparent;color:var(--text);
+  outline:none;border:1px solid rgba(0,0,0,0.06);
+}
+.contact button{margin-top:8px;padding:12px 18px;border-radius:12px;border:0;background:linear-gradient(90deg,var(--primary),var(--accent));color:#fff;font-weight:700;cursor:pointer}
+
+/* ---------------- FOOTER ---------------- */
+.footer{padding:52px 0;margin-top:40px;color:var(--muted)}
+.footer .cols{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+@media (max-width:980px){.footer .cols{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.footer .cols{grid-template-columns:1fr}}
+.footer .brand small{display:block;color:var(--muted);margin-top:8px}
+.socials a{display:inline-flex;margin-right:10px;padding:10px;border-radius:10px;background:var(--glass);align-items:center;justify-content:center}
+
+/* ---------------- FLOATING ACTIONS ---------------- */
+.fab-wrap{position:fixed;right:20px;bottom:20px;z-index:1400;display:flex;flex-direction:column;gap:12px}
+.fab{width:56px;height:56px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;box-shadow:0 10px 30px rgba(0,0,0,0.2);cursor:pointer}
+.fab.call{background:linear-gradient(180deg,#ff8a65,#ff7043)}
+.fab.wa{background:linear-gradient(180deg,#25d366,#14b958)}
+.fab:hover{transform:translateY(-6px);filter:brightness(1.03)}
+
+/* ---------------- WAVES / DIVIDERS ---------------- */
+.wave{display:block;width:100%;height:80px;margin-top:-1px;transform:translateY(1px)}
+
+/* ---------------- SMALL HELPERS ---------------- */
+.kicker{display:inline-block;padding:6px 10px;border-radius:999px;background:var(--glass);color:var(--muted);font-weight:700;margin-bottom:10px}
+.small{font-size:13px;color:var(--muted)}
+.center-text{text-align:center;margin:auto}
+
+/* ---------------- ANIMATIONS ---------------- */
+@keyframes floaty {
+  0%{transform:translateY(0)}50%{transform:translateY(-6px)}100%{transform:translateY(0)}
+}
+.card, .btn, .fab{will-change:transform,box-shadow}
+
+/* ---------------- RESPONSIVE ---------------- */
+@media (max-width:860px){
+  .brand h1{font-size:16px}
+  .hero h2{font-size:30px}
+  .hero{min-height:360px}
+  .header-inner{padding:10px}
+  .nav{display:none}
+  .hamburger{display:flex}
+}
+  </style>
+</head>
+<body class="theme-light">
+  <!-- HEADER -->
+  <header class="header">
+    <div class="container header-inner">
+      <div class="brand">
+        <div class="logo">A</div>
+        <div>
+          <h1>Scrap house scrap Trading llc</h1>
+          <div class="h6">Reliable • Instant Pickup • Best Prices</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a href="#services">Services</a>
+        <a href="#how">How it Works</a>
+        <a href="#categories">Categories</a>
+        <a href="#contact">Contact</a>
+        <!-- 🔹 Login/Signup Buttons in Header -->
+<div class="auth-buttons">
+  <button onclick="openModal('loginModal')">Login</button>
+  <button onclick="openModal('signupModal')">Signup</button>
+</div>
+
+<!-- 🔹 Login Modal -->
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('loginModal')">&times;</span>
+    <h2>Login</h2>
+    <form>
+      <input type="email" placeholder="Email" required>
+      <input type="password" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</div>
+
+<!-- 🔹 Signup Modal -->
+<div id="signupModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('signupModal')">&times;</span>
+    <h2>Signup</h2>
+    <form>
+      <input type="text" placeholder="Full Name" required>
+      <input type="email" placeholder="Email" required>
+      <input type="password" placeholder="Password" required>
+      <button type="submit">Signup</button>
+    </form>
+  </div>
+</div>
+
+<style>
+/* 🔹 Modal Styles */
+.modal { display:none; position:fixed; z-index:1000; left:0; top:0;
+  width:100%; height:100%; background:rgba(0,0,0,0.6); }
+.modal-content { background:#fff; margin:10% auto; padding:20px;
+  width:300px; border-radius:10px; text-align:center; }
+.modal-content input { width:90%; padding:10px; margin:10px 0; border:1px solid #ccc; border-radius:5px; }
+.modal-content button { background:#007BFF; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer; }
+.close { float:right; font-size:22px; cursor:pointer; }
+.auth-buttons button { margin:5px; padding:8px 16px; border:none; border-radius:5px; cursor:pointer; }
+</style>
+
+<script>
+function openModal(id) { document.getElementById(id).style.display = 'block'; }
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+window.onclick = function(e) {
+  if (e.target.classList.contains('modal')) {
+    e.target.style.display = 'none';
+  }
+}
+</script>
+
+      </nav>
+
+      <div class="header-actions">
+        <div style="display:flex;gap:8px;align-items:center">
+          <button id="themeToggle" class="btn btn-ghost" title="Toggle theme">Theme</button>
+          <button class="btn btn-primary" onclick="openWhatsApp()">Get Pickup</button>
+        </div>
+        <div class="hamburger" id="hamb">
+          <span></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero container" aria-label="Hero">
+    <div class="hero__bg" id="heroBg"></div>
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+      <div class="kicker">Scrap Collection • Local • Fast</div>
+      <h2>We buy scrap — highest rates, instant pickup</h2>
+      <p>Schedule a pickup, get the best price, and we will collect from your location. Trusted across the region.</p>
+
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-primary" href="#contact">Request Pickup</a>
+        <a class="btn btn-ghost" href="#categories">See Categories</a>
+      </div>
+
+      <!-- pickup form (simple) -->
+      <form class="pickup-form" onsubmit="event.preventDefault(); openWhatsApp();">
+        <input type="text" name="name" placeholder="Your name" required>
+        <input type="tel" name="phone" placeholder="Phone / WhatsApp" required>
+        <select name="material" required>
+          <option value="">Choose material</option>
+          <option>Metals (Steel / Iron)</option>
+          <option>Aluminium</option>
+          <option>Copper</option>
+          <option>Electronic</option>
+        </select>
+        <input class="full" type="text" name="address" placeholder="Pickup address (city, area)" required>
+        <button class="full btn btn-primary" type="submit">Request Pickup via WhatsApp</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- SVG wave divider -->
+  <svg class="wave" viewBox="0 0 1440 80" preserveAspectRatio="none"><path fill="currentColor" fill-opacity=".06" d="M0,32L40,42.7C80,53,160,75,240,74.7C320,75,400,53,480,53.3C560,53,640,75,720,80C800,85,880,75,960,69.3C1040,64,1120,64,1200,69.3C1280,75,1360,85,1400,90.7L1440,96L1440,0L1400,0C1360,0,1280,0,1200,0C1120,0,1040,0,960,0C880,0,800,0,720,0C640,0,560,0,480,0C400,0,320,0,240,0C160,0,80,0,40,0L0,0Z"></path></svg>
+
+  <!-- FEATURES / SERVICES -->
+  <section id="services" class="section section--cards container">
+    <div class="center-text">
+      <div class="kicker">Why choose us</div>
+      <h2 style="margin-bottom:12px">Fast, Fair & Professional</h2>
+      <p class="small" style="max-width:820px;margin:0 auto 28px;color:var(--muted)">We evaluate material honestly and pay the best market rates. Pickup at your convenience, proper weighing, and instant cash/transfer.</p>
+    </div>
+
+    <div class="grid" style="margin-top:28px">
+      <article class="card">
+        <div class="media"><img src="scrap.jpg" alt="fast pickup"></div>
+        <h3>Instant Pickup</h3>
+        <p>Schedule via WhatsApp and our team will arrive within the promised window. Fast and respectful service.</p>
+      </article>
+
+      <article class="card">
+        <div class="media"><img src="scrap3.jpg" alt="best price"></div>
+        <h3>Best Rates</h3>
+        <p>We constantly monitor market rates and offer competitive pricing for scrap materials.</p>
+      </article>
+
+      <article class="card">
+        <div class="media"><img src="scrap4.jpg" alt="recycle"></div>
+        <h3>Environment Friendly</h3>
+        <p>We ensure proper processing and recycling — reducing waste and supporting sustainability.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta container">
+    <h2>Ready to clear your space & earn money?</h2>
+    <p>Request a free pickup and get payment upon collection. Quick, honest, and reliable.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="openWhatsApp()">Request Pickup</button>
+      <a class="btn btn-ghost" href="#contact">Contact Us</a>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how" class="section container">
+    <div class="center-text"><div class="kicker">Process</div><h2>How it works</h2><p class="small" style="max-width:860px;margin:8px auto 32px;color:var(--muted)">Simple 3-step workflow — Request, We Collect, You Get Paid.</p></div>
+
+    <div class="grid" style="margin-top:24px">
+      <article class="card">
+        <div class="media"><img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=1200&auto=format&fit=crop" alt="request"></div>
+        <h3>1. Request</h3>
+        <p>Send item details and address — via form or WhatsApp. We'll confirm pickup time.</p>
+      </article>
+
+      <article class="card">
+        <div class="media"><img src="https://images.unsplash.com/photo-1487014679447-9f8336841d58?q=80&w=1200&auto=format&fit=crop" alt="we collect"></div>
+        <h3>2. Collection</h3>
+        <p>Our team arrives, weighs and inspects the material — transparent and fair handling.</p>
+      </article>
+
+      <article class="card">
+        <div class="media"><img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=1200&auto=format&fit=crop" alt="payment"></div>
+        <h3>3. Payment</h3>
+        <p>Instant payment in cash or bank transfer — your preferred method.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section id="categories" class="section container">
+    <div class="center-text"><div class="kicker">Materials</div><h2>What we accept</h2><p class="small" style="max-width:860px;margin:8px auto 22px;color:var(--muted)">Common categories — metals, electronics, machinery, and more.</p></div>
+
+    <div class="grid" style="margin-top:18px">
+      <article class="card">
+        <div class="media"><img src="scrap5.jpg" alt="steel"></div>
+        <h3>Steel & Iron</h3><p class="small">Structural steel, rods, scrap iron, mixed ferrous metals.</p>
+      </article>
+
+      <article class="card">
+        <div class="media"><img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=1200&auto=format&fit=crop" alt="aluminium"></div>
+        <h3>Aluminium</h3><p class="small">Cans, window frames, sheets, alloys.</p>
+      </article>
+
+      <article class="card">
+        <div class="media"><img src="https://images.unsplash.com/photo-1518779578993-ec3579fee39f?q=80&w=1200&auto=format&fit=crop" alt="copper"></div>
+        <h3>Copper & Brass</h3><p class="small">Wiring, tubing, radiators, electronics copper.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="section container">
+    <div class="center-text"><div class="kicker">Get in touch</div><h2>Contact Us</h2><p class="small" style="max-width:860px;margin:8px auto 22px;color:var(--muted)">Send your details and we'll reach out to schedule pickup.</p></div>
+
+    <div style="display:grid;grid-template-columns:1fr 420px;gap:22px">
+      <div class="contact card">
+        <form onsubmit="event.preventDefault(); openWhatsApp();">
+          <div class="form-grid">
+            <input name="name" placeholder="Full name" required>
+            <input name="phone" placeholder="Phone / WhatsApp" required>
+            <input name="city" placeholder="City / Area">
+            <input name="material" placeholder="Material (e.g. Copper)">
+          </div>
+          <textarea name="notes" rows="4" placeholder="Any notes"></textarea>
+          <div style="display:flex;gap:12px;margin-top:10px">
+            <button type="submit" class="btn btn-primary">Send via WhatsApp</button>
+            <button type="button" class="btn btn-ghost" onclick="alert('Call 065208326')">Call Us</button>
+          </div>
+        </form>
+      </div>
+
+      <aside class="card" style="padding:0;overflow:hidden;border-radius:14px">
+        <!-- Map placeholder (replace with real embed if you have) -->
+        <iframe
+  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d28868.29338562977!2d55.50612210682303!3d25.433786314432664!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ef5f9da3682b359%3A0x1757d9f1a710df67!2sAl%20Mubarak%20Scrap%20Trading%20LLC!5e0!3m2!1sen!2sae!4v1696260000000"
+  width="100%"
+  height="350"
+  style="border:0;"
+  allowfullscreen=""
+  loading="lazy"
+  referrerpolicy="no-referrer-when-downgrade">
+</iframe>
+      </aside>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer container">
+    <div class="footer-inner container">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap">
+        <div style="max-width:320px">
+          <div class="brand"><div class="logo" style="width:56px;height:56px;border-radius:14px">A</div>
+            <div style="margin-top:6px"><strong>ALMUBARAK Scrap Traders</strong><small style="display:block;color:var(--muted)">We buy scrap near you</small></div>
+          </div>
+          <p class="small" style="margin-top:12px;color:var(--muted)">Contact: 065208326 • Almubarakscraptradingllc@gmail.com</p>
+        </div>
+
+        <div style="flex:1;display:flex;gap:18px;flex-wrap:wrap;justify-content:flex-end">
+          <div>
+            <h4>Quick Links</h4>
+            <ul class="small" style="list-style:none;margin-top:8px">
+              <li><a href="#services">Services</a></li>
+              <li><a href="#how">How it Works</a></li>
+              <li><a href="#categories">Categories</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4>Follow</h4>
+            <div class="socials" style="margin-top:8px">
+              <a class="small" href="#" aria-label="facebook" style="margin-right:8px">Facebook</a>
+              <a class="small" href="#" aria-label="instagram">Instagram</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:22px;border-top:1px solid rgba(0,0,0,0.06);padding-top:18px" class="center-text small">
+        © <span id="year"></span> ALMUBARAK Scrap Traders — All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- FLOATING ACTION BUTTONS -->
+  <div class="fab-wrap">
+    <div class="fab wa" title="WhatsApp" onclick="openWhatsApp()">WA</div>
+    <div class="fab call" title="Call" onclick="callNow()">📞</div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script>
+    /* ========= small helpers ========= */
+    function openWhatsApp(){
+      // Prefill message (change number as required)
+      const number = "065208326"; // 92 + number (no leading 0)
+      const text = encodeURIComponent("Hello, I want to request a scrap pickup. Please assist. — Sent from site");
+      window.open("https://wa.me/"+number+"?text="+text, "_blank");
+    }
+    function callNow(){
+      window.location.href = "tel:+923325795035";
+    }
+
+    /* ========= auto-theme rotate + manual toggle ========= */
+    (function(){
+      const themes = ["","theme-dark","theme-grad"]; // "" will resolve to default root colors (light-like)
+      let i = 0;
+      const intervalMs = 9000; // 9s
+      const body = document.body;
+
+      // initialize from saved preference
+      const saved = localStorage.getItem('site-theme');
+      if(saved){
+        if(saved === "light") body.className = "";
+        else body.className = saved;
+      } else {
+        body.className = "theme-light";
+      }
+
+      let auto = true;
+      let rotater = setInterval(() => {
+        if(!auto) return;
+        i = (i+1) % themes.length;
+        // apply theme
+        if(themes[i] === "") { body.className = "theme-light"; localStorage.setItem('site-theme','light'); }
+        else { body.className = themes[i]; localStorage.setItem('site-theme',themes[i]); }
+      }, intervalMs);
+
+      // Pause auto rotate when user hovers hero or interacts
+      document.querySelector('.hero').addEventListener('mouseenter',()=>auto=false);
+      document.querySelector('.hero').addEventListener('mouseleave',()=>auto=true);
+
+      // Theme toggle button (manual)
+      document.getElementById('themeToggle').addEventListener('click', ()=>{
+        auto = false; // stop auto rotation on manual change
+        i = (i+1) % themes.length;
+        if(themes[i] === "") { body.className = "theme-light"; localStorage.setItem('site-theme','light'); }
+        else { body.className = themes[i]; localStorage.setItem('site-theme',themes[i]); }
+      });
+    })();
+
+    /* ========= mobile menu (if needed) ========= */
+    (function(){
+      const hamb = document.getElementById('hamb');
+      const nav = document.querySelector('.nav');
+      if(!hamb || !nav) return;
+      hamb.addEventListener('click', ()=> nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex');
+    })();
+
+    /* ========= dynamic year ========= */
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* ========= subtle parallax movement for hero bg on mouse move (desktop) ========= */
+    (function(){
+      const hero = document.querySelector('.hero');
+      const bg = document.getElementById('heroBg');
+      if(!hero || !bg) return;
+      hero.addEventListener('mousemove', (e)=>{
+        const rX = (e.clientX - window.innerWidth/2) / 40;
+        const rY = (e.clientY - window.innerHeight/2) / 60;
+        bg.style.transform = `translate3d(${rX}px, ${rY}px, 0) scale(1.03)`;
+      _P});
+      hero.addEventListener('mouseleave', ()=> bg.style.transform = 'translate3d(0,0,0) scale(1)');
+    })();
+  </script>
+</body>
+</html>
